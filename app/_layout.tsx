@@ -10,9 +10,11 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import type { Session } from "@supabase/supabase-js";
+import { TamaguiProvider } from "tamagui";
 
 import { useColorScheme } from 'react-native';
 import { supabase } from "@/utils/supabase/client";
+import tamaguiConfig from "@/tamagui.config";
 
 export {
   ErrorBoundary,
@@ -54,7 +56,7 @@ export default function RootLayout() {
     if (!rootNavigationState?.key || !authInitialized) return
     const inAuthGroup = segments[0] === "(auth)"
     if (!session && !inAuthGroup) { router.replace("/(auth)/onboard-auth") }
-    else if (session && inAuthGroup) { router.replace("/(drawer)/(tabs)/home/index") }
+    else if (session && inAuthGroup) { router.replace("/(drawer)/(tabs)/home") }
   }, [session, segments, rootNavigationState?.key, authInitialized])
 
   if (!loaded) {
@@ -76,18 +78,26 @@ function RootLayoutNav() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <StatusBar  />
+        <TamaguiProvider config={tamaguiConfig}>
+          <StatusBar  />
 
-        <Stack>
-          <Stack.Screen
-            name="(drawer)"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="(auth)"
-            options={{ headerShown: false }}
-          />
-        </Stack>
+          <Stack
+            screenOptions={{
+              contentStyle: {
+                backgroundColor: colorScheme === "dark" ? "#121212" : "#f5f5f5"
+              }
+            }}
+          >
+            <Stack.Screen
+              name="(drawer)"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(auth)"
+              options={{ headerShown: false }}
+            />
+          </Stack>
+        </TamaguiProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

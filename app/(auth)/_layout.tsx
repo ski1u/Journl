@@ -1,20 +1,22 @@
-import { Stack, useRouter } from "expo-router"
+import { Stack } from "expo-router"
+
+import { useColorScheme } from "react-native"
 
 export default function AuthLayout() {
-  const router = useRouter()
-  
+  const colorScheme = useColorScheme()
+
   return (
     <Stack 
       screenOptions={{ 
         headerShown: false,
         contentStyle: { 
-          // backgroundColor: colorScheme === "dark" ? "#121212" : "#ffffff" 
+          backgroundColor: colorScheme === "dark" ? "#121212" : "#ffffff"
         }
       }}
     >
       <Stack.Screen name="onboard-auth" options={{ headerShown: false }} />
       <Stack.Screen name="sign-in" options={{ headerShown: false }} />
-      <Stack.Screen name="sign-up" options={{ headerShown: false }} />
+      <Stack.Screen name="register" options={{ headerShown: false }} />
     </Stack>
   )
 }
