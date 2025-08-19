@@ -12,7 +12,9 @@ import 'react-native-reanimated';
 import type { Session } from "@supabase/supabase-js";
 import { TamaguiProvider } from "tamagui";
 
-import { useColorScheme } from 'react-native';
+import { useColorScheme, View, Text } from 'react-native';
+import LoadingScreen from "@/components/loading-screen";
+import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg'
 import { supabase } from "@/utils/supabase/client";
 import tamaguiConfig from "@/tamagui.config";
 
@@ -34,6 +36,8 @@ export default function RootLayout() {
     ...FontAwesome.font,
   }); const router = useRouter(); const segments = useSegments(); const rootNavigationState = useRootNavigationState()
   const [session, setSession] = useState<Session | null>(null); const [authInitialized, setAuthInitialized] = useState(false)
+  const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null)
+  const scheme = useColorScheme();
 
   useEffect(() => {
     if (error) throw error;
@@ -53,15 +57,30 @@ export default function RootLayout() {
 
     return () => { isMounted = false; subscription.subscription?.unsubscribe() }
   }, []); useEffect(() => {
+    let isMounted = true
+    async function loadProfile() {
+      if (!session) { if (isMounted) setIsOnboarded(null); return }
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('onboarded')
+        .eq('id', session.user.id)
+        .single()
+      if (!isMounted) return
+      setIsOnboarded(error ? null : !!data?.onboarded)
+    }
+    loadProfile()
+    return () => { isMounted = false }
+  }, [session]); useEffect(() => {
     if (!rootNavigationState?.key || !authInitialized) return
     const inAuthGroup = segments[0] === "(auth)"
     if (!session && !inAuthGroup) { router.replace("/(auth)/onboard-auth") }
-    else if (session && inAuthGroup) { router.replace("/(drawer)/(tabs)/home") }
-  }, [session, segments, rootNavigationState?.key, authInitialized])
+    else if (session) { if (isOnboarded === false) { router.replace("/onboard-questions") }
+    else if (isOnboarded === true && inAuthGroup) { router.replace("/(drawer)/(tabs)/index") } }
+  }, [session, isOnboarded, segments, rootNavigationState?.key, authInitialized])
 
-  if (!loaded) {
-    return null;
-  }
+  const ready = loaded && authInitialized && (!session || isOnboarded !== null)
+
+  if (!ready) { return <LoadingScreen  /> }
 
   ;(Text as any).defaultProps = (Text as any).defaultProps || {}
   ;(Text as any).defaultProps.style = [
@@ -85,7 +104,8 @@ function RootLayoutNav() {
             screenOptions={{
               contentStyle: {
                 backgroundColor: colorScheme === "dark" ? "#121212" : "#f5f5f5"
-              }
+              },
+              headerShown: false
             }}
           >
             <Stack.Screen

@@ -2,14 +2,18 @@ import { supabase } from './client';
 
 import { Alert } from 'react-native';
 
-export async function signIn(email: string, password: string) {
+export async function signIn(info: { email: string, password: string }) {
+  const { email, password } = info
+
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) Alert.alert(error.message)
 
   return { data, error };
 }
 
-export async function signUp(email: string, password: string) {
+export async function signUp(info: { email: string, password: string }) {
+  const { email, password } = info
+
   const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) Alert.alert(error.message)
 

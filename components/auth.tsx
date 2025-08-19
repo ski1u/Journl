@@ -2,7 +2,7 @@ import "@/global.css"
 
 import { useForm, Controller } from "react-hook-form"
 
-import { View, Text, Pressable } from "react-native"
+import { View, Text, Pressable, ActivityIndicator } from "react-native"
 import { Input } from "tamagui"
 import Button from "./button"
 import { Link, useRouter } from "expo-router"
@@ -13,10 +13,22 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import type { ComponentType } from "react"
 import { Mail, Lock, ArrowLeft } from "lucide-react-native"
 
+import { signIn, signUp } from "@/utils/supabase/auth"
+
 const schema = z.object({
     email: z.email("Enter a valid email"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-})
+}); const fields: Array<{
+    name: keyof FormValues
+    placeholder: string
+    keyboardType?: "default" | "email-address" | "numeric" | "phone-pad" | "number-pad"
+    secureTextEntry?: boolean
+    autoCapitalize?: "none" | "sentences" | "words" | "characters"
+    icon: ComponentType<{ size?: number; color?: string }>
+}> = [
+    { name: "email", placeholder: "demo@demo.com", keyboardType: "email-address", autoCapitalize: "none", icon: Mail },
+    { name: "password", placeholder: "demodemo", secureTextEntry: true, autoCapitalize: "none", icon: Lock },
+]
 
 type FormValues = z.infer<typeof schema>
 
@@ -29,31 +41,21 @@ export default function Auth({ type = "sign-in" } : {
     })
     const router = useRouter()
 
-    const onSubmit = (data: FormValues) => {
-        console.log(`[${type}] submit`, data)
+    const onSubmit = async (d: FormValues) => {
+        const f = type === "sign-in" ? signIn : signUp
+        try {
+            const { data, error } = await f(d)
+            if (error || !(data?.user || data?.session)) { console.error(error); return }
+            router.replace("/(drawer)/(tabs)/home")
+        } catch (err) { console.error(err) }
     }
-    
-    const fields: Array<{
-        name: keyof FormValues
-        placeholder: string
-        keyboardType?: "default" | "email-address" | "numeric" | "phone-pad" | "number-pad"
-        secureTextEntry?: boolean
-        autoCapitalize?: "none" | "sentences" | "words" | "characters"
-        icon: ComponentType<{ size?: number; color?: string }>
-    }> = [
-        { name: "email", placeholder: "demo@demo.com", keyboardType: "email-address", autoCapitalize: "none", icon: Mail },
-        { name: "password", placeholder: "demodemo", secureTextEntry: true, autoCapitalize: "none", icon: Lock },
-    ]
     
     return (
     <>
         <Pressable
             onPress={() => {
-                if (router.canGoBack()) {
-                    router.back()
-                } else {
-                    router.replace("/(auth)/onboard-auth")
-                }
+                if (router.canGoBack()) { router.back() }
+                else { router.replace("/(auth)/onboard-auth") }
             }}
             className="absolute top-24 left-8"
         >
@@ -93,7 +95,7 @@ export default function Auth({ type = "sign-in" } : {
                                             color="#fff"
                                             backgroundColor="$colorTransparent"
                                             paddingLeft={36}
-                                            borderColor={err?.message ? "#f87171" : "#fff"}
+                                            borderColor={err?.message ? "#f87171" : "#555"}
                                         />
                                         <View style={{ position: "absolute", left: 12, top: 0, bottom: 0, justifyContent: "center" }}>
                                             <Icon size={16} color="#999" />
@@ -121,7 +123,11 @@ export default function Auth({ type = "sign-in" } : {
                     disabled={isSubmitting}
                     width="100%"
                 >
-                    {type === "register" ? "Create account" : "Sign in"}
+                    {isSubmitting ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        type === "register" ? "Create account" : "Sign in"
+                    )}
                 </Button>
             </View>
 

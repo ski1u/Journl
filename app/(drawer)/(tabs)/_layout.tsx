@@ -1,0 +1,35 @@
+import "@/global.css"
+
+import { Tabs } from "expo-router"
+
+import { Home, Plus, User } from "lucide-react-native"
+
+export default function TabsLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: "#111",
+          borderTopWidth: 0,
+          height: 80, paddingTop: 8, paddingBottom: 8
+        },
+        headerShown: false,
+        tabBarActiveTintColor: "#58a76d",
+        tabBarShowLabel: false, tabBarLabelStyle: { marginTop: 3, fontSize: 9 }
+      }}
+    >
+      <Tabs.Screen name="index" options={{
+        title: "Home",
+        tabBarIcon: ({ color, focused }) => <Home color={focused ? color : "#333"} size={28} />
+      }} />
+      <Tabs.Screen name="new" options={{
+        title: "New",
+        tabBarIcon: ({ color, focused }) => <Plus color={focused ? color : "#333"} size={28} />
+      }} />
+      <Tabs.Screen name="profile" options={{
+        title: "Profile",
+        tabBarIcon: ({ color, focused }) => <User color={focused ? color : "#333"} size={28} />
+      }} />
+    </Tabs>
+  )
+}
