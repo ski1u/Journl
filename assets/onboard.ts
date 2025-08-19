@@ -13,7 +13,7 @@ export const onboardAuthData: Onboard[] = [
   {
     tag: "About",
     title: "Document the small moments.",
-    desc: "Journl allows you to capture anything in specific with images and journal entries, using it as a reflective tool",
+    desc: "Journl allows you to capture anything in specific with images and journal entries, using it as a reflective tool.",
     image: Grass,
   },
   {

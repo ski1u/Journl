@@ -11,7 +11,7 @@ export default function Badge({ children, className, textClassName } : {
 }) {
     return (
         <View
-            className={"rounded-full border-[#eee] border-2 self-start px-3 py-1 " + (className ?? "")}
+            className={"rounded-full border-[#eee] border-[1px] self-start px-3 py-1 " + (className ?? "")}
         >
             <Text
                 className={"text-[#eee] w-fit text-xs" + (textClassName ?? "")}
