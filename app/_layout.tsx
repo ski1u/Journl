@@ -12,9 +12,8 @@ import 'react-native-reanimated';
 import type { Session } from "@supabase/supabase-js";
 import { TamaguiProvider } from "tamagui";
 
-import { useColorScheme, View, Text } from 'react-native';
+import { useColorScheme, Text } from 'react-native';
 import LoadingScreen from "@/components/loading-screen";
-import Svg, { Defs, RadialGradient, Stop, Circle } from 'react-native-svg'
 import { supabase } from "@/utils/supabase/client";
 import tamaguiConfig from "@/tamagui.config";
 
@@ -37,7 +36,6 @@ export default function RootLayout() {
   }); const router = useRouter(); const segments = useSegments(); const rootNavigationState = useRootNavigationState()
   const [session, setSession] = useState<Session | null>(null); const [authInitialized, setAuthInitialized] = useState(false)
   const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null)
-  const scheme = useColorScheme();
 
   useEffect(() => {
     if (error) throw error;
@@ -60,22 +58,22 @@ export default function RootLayout() {
     let isMounted = true
     async function loadProfile() {
       if (!session) { if (isMounted) setIsOnboarded(null); return }
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('onboarded')
         .eq('id', session.user.id)
-        .single()
+        .maybeSingle()
       if (!isMounted) return
-      setIsOnboarded(error ? null : !!data?.onboarded)
+      setIsOnboarded(!!data?.onboarded)
     }
     loadProfile()
     return () => { isMounted = false }
   }, [session]); useEffect(() => {
     if (!rootNavigationState?.key || !authInitialized) return
     const inAuthGroup = segments[0] === "(auth)"
-    if (!session && !inAuthGroup) { router.replace("/(auth)/onboard-auth") }
+    if (!session && !inAuthGroup) { router.replace("/(auth)") }
     else if (session) { if (isOnboarded === false) { router.replace("/onboard-questions") }
-    else if (isOnboarded === true && inAuthGroup) { router.replace("/(drawer)/(tabs)/index") } }
+    else if (isOnboarded === true && inAuthGroup) { router.replace("/(drawer)/(tabs)") } }
   }, [session, isOnboarded, segments, rootNavigationState?.key, authInitialized])
 
   const ready = loaded && authInitialized && (!session || isOnboarded !== null)

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Journl-main",
-    "slug": "Journl-main",
+    "name": "Journl-sec",
+    "slug": "Journl-sec",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "Journl-main",
+    "scheme": "Journl-sec",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {

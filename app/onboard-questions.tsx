@@ -1,6 +1,10 @@
 import "@/global.css"
 
+import { useState } from "react"
+
 import { View, Text } from "react-native"
+
+import { z } from "zod"
 
 export default function OnboardQuestions() {
   return (
