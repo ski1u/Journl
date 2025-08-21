@@ -22,7 +22,7 @@ export default function LoadingScreen() {
         <Text
           style={{
             color: '#fff',
-            fontSize: 36,
+            fontSize: 28,
             fontWeight: '600',
             letterSpacing: -0.5
           }}

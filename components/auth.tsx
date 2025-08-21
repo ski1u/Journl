@@ -46,7 +46,7 @@ export default function Auth({ type = "sign-in" } : {
         try {
             const { data, error } = await f(d)
             if (error || !(data?.user || data?.session)) { console.error(error); return }
-            router.replace("/(drawer)/(tabs)/home")
+            router.replace("/(drawer)/(tabs)")
         } catch (err) { console.error(err) }
     }
     
@@ -55,7 +55,7 @@ export default function Auth({ type = "sign-in" } : {
         <Pressable
             onPress={() => {
                 if (router.canGoBack()) { router.back() }
-                else { router.replace("/(auth)/onboard-auth") }
+                else { router.replace("/(auth)") }
             }}
             className="absolute top-24 left-8"
         >

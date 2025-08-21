@@ -1,15 +1,7 @@
 import "@/global.css"
 
-import { useState } from "react"
+import OnboardQuestions from "@/components/onboard-questions"
 
-import { View, Text } from "react-native"
-
-import { z } from "zod"
-
-export default function OnboardQuestions() {
-  return (
-    <View className="flex-1 items-center justify-center">
-      <Text className="text-white text-2xl">Onboarding Questions</Text>
-    </View>
-  )
+export default function OnboardQuestionsPage() {
+  return <OnboardQuestions  />
 }
