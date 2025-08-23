@@ -70,9 +70,7 @@ export const onboardingQuestionsData: OnboardQuestion[] = [
         { value: "other", option: "❓ Other" },
       ]
     }
-]
-
-export const reasonValues = [
+]; export const reasonValues = [
   "track-mood-trends",
   "habit-building",
   "mental-health-insights",
@@ -81,7 +79,6 @@ export const reasonValues = [
   "life-logging",
   "other"
 ] as const
-
 export const onboardingQuestionsSchema = z.object({
   handle: z
   .string()
@@ -97,5 +94,11 @@ export const onboardingQuestionsSchema = z.object({
     .regex(/^[a-zA-Z0-9 ]*$/, {
       message: "Name should only contain letters, numbers, and spaces",
     }),
-  reason: z.enum(reasonValues).optional().nullable(),
+  reason: z.enum([...reasonValues, ""]).optional(),
 })
+export const onboardingQuestionsFeatures = [
+  "📝 Capture entries quickly with a clean editor",
+  "📷 Attach photos from your camera or gallery",
+  "⏰ Build a journaling habit with gentle reminders",
+  "📈 Track moods and reflections over time"
+]

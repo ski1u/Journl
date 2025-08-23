@@ -71,9 +71,11 @@ export default function RootLayout() {
   }, [session]); useEffect(() => {
     if (!rootNavigationState?.key || !authInitialized) return
     const inAuthGroup = segments[0] === "(auth)"
-    if (!session && !inAuthGroup) { router.replace("/(auth)") }
-    else if (session) { if (isOnboarded === false) { router.replace("/onboard-questions") }
-    else if (isOnboarded === true && inAuthGroup) { router.replace("/(drawer)/(tabs)") } }
+    const atOnboardQuestions = segments[0] === "onboard-questions"
+
+    if (!session) { if (!inAuthGroup) { router.replace("/(auth)") }; return }
+    if (isOnboarded === false && !atOnboardQuestions) { router.replace("/onboard-questions"); return }
+    if (isOnboarded === true && (inAuthGroup || atOnboardQuestions)) { router.replace("/(drawer)/(tabs)"); return }
   }, [session, isOnboarded, segments, rootNavigationState?.key, authInitialized])
 
   const ready = loaded && authInitialized && (!session || isOnboarded !== null)

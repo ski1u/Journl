@@ -23,7 +23,7 @@ export default function Badge({ children, className, textClassName, textStyle, f
             {...rest}
         >
             <Text
-                className={"text-[#eee] text-xs " + (textClassName ?? "")}
+                className={"text-[#eee] " + (textClassName ?? "")}
                 style={textStyle}
             >{children}</Text>
         </View>

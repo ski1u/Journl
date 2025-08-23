@@ -59,7 +59,8 @@
     "tailwindcss": "^3.4.17",
     "tamagui": "^1.132.19",
     "zod": "^4.0.17",
-    "expo-linear-gradient": "~14.1.5"
+    "expo-linear-gradient": "~14.1.5",
+    "expo-haptics": "~14.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.28.3",

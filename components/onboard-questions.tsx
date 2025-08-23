@@ -3,6 +3,7 @@ import "@/global.css"
 import { useState } from "react"
 import { Pressable, View, Text } from "react-native"
 import { AnimatePresence, MotiView } from "moti"
+import * as Haptics from 'expo-haptics'
 
 import Button from "./button"
 import ProgressCircle from "./progression-circles"
@@ -17,8 +18,7 @@ import { z } from "zod"
 
 import { ArrowLeft, ArrowRight } from 'lucide-react-native'
 
-import { onboardingQuestionsData as qData, onboardingQuestionsSchema as qSchema } from "@/assets/onboard"
-import LoadingScreen from "./loading-screen"
+import { onboardingQuestionsData as qData, onboardingQuestionsSchema as qSchema, onboardingQuestionsFeatures as qFeatures } from "@/assets/onboard"
 import { onboardAction, checkUniqueHandle } from "@/utils/supabase/onboard"
 
 const OnboardInput = ({ className, ...props } : {
@@ -43,18 +43,22 @@ const OnboardBadge = ({ checked, onCheckedChange, className, children, ...props 
         <Pressable onPress={onCheckedChange} className="w-full">
             <MotiView
                 from={{ backgroundColor: 'rgba(0,0,0,0)' }}
-                animate={{ backgroundColor: checked ? '#58a76d' : 'rgba(0,0,0,0)' }}
+                animate={{ backgroundColor: checked ? '#58a76d50' : 'rgba(0,0,0,0)' }}
                 transition={{ type: 'timing', duration: 125 }}
                 style={{ borderRadius: 6 }}
+                className={`border-[1px] border-[#333] py-4 px-3 rounded-md ` + (className ?? "")}
             >
-                <Badge
+{/*                 <Badge
                     className={`border-[1px] border-[#333] py-4 px-3 rounded-md ` + (className ?? "")}
                     textClassName={checked ? "text-base text-white" : "text-base text-[#999]"}
-                    textStyle={{ fontWeight: checked ? '600' as const : '400' as const }}
+                    textStyle={{ fontFamily: checked ? 'Inter_600SemiBold' : 'Inter_400Regular' }}
                     {...props}
                 >
                     {children}
-                </Badge>
+                </Badge> */}
+                <Text
+                    className="text-white"
+                >{children}</Text>
             </MotiView>
         </Pressable>
     )
@@ -68,29 +72,77 @@ const OnboardArrow = ({ dir, func, className, size, ...props } : {
     const arrowClassName = 'cursor-pointer transition duration-500 hover:-translate-y-[2px]'
 
     return dir === "left" ? (
-        <Pressable onPress={func}>
-            <ArrowLeft color='#999' size={size} className={(arrowClassName ?? "") + " mr-24 " + (className ?? "")} {...props} />
+        <Pressable className="bg-gray-800 rounded-full p-2" onPress={func}>
+            <ArrowLeft color='#fff' size={28} className={(arrowClassName ?? "") + " mr-24 " + (className ?? "")} {...props} />
         </Pressable>
     ) : (
-        <Pressable onPress={func}>
-            <ArrowRight color='#999' size={size} className={(arrowClassName ?? "") + " ml-24 " + (className ?? "")} {...props} />
+        <Pressable className="bg-gray-800 rounded-full p-2" onPress={func}>
+            <ArrowRight color='#fff' size={28} className={(arrowClassName ?? "") + " ml-24 " + (className ?? "")} {...props} />
         </Pressable>
     )
 }
-const LastCTA = ({ handleStep, lastMessage } : {
-    lastMessage: string
+const SecondToLastCTA = ({ handleStep } : {
     handleStep: (action: "next" | "prev") => Promise<void>
 }) => {
     return (
-    <View className='flex items-center flex-col gap-4'>
-        <Badge className='rounded-full w-fit' fullWidth={false}>You're all set.</Badge>
-        <Text className='text-white text-center text-4xl font-semibold leading-tight md:w-2/3'>
-            {lastMessage}
-        </Text>
+        <View
+            className="flex-col justify-center h-screen"
+        >
+            <View className="h-[80%] flex-col justify-center">
+                <Text className="text-white text-2xl">With
+                    <Text className="text-[#58a76d] font-semibold tracking-tight"> Journl</Text>,
+                    you will be able to:
+                </Text>
 
-        <View className='flex-row items-center gap-8'>
-            <OnboardArrow size={40} className='m-0' dir='left' func={() => handleStep("prev")} />
-            <Button onPress={() => handleStep("next")}>Get Started</Button>
+                <View className="gap-6 mt-8">
+                    {qFeatures.map((feature, fIndex) => (
+                        <MotiView
+                            key={`onboarding-questions-feature-${fIndex}`}
+                            from={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ type: 'timing', duration: 300, delay: fIndex * 450 }}
+                        >
+                            <Text className="text-white font-medium text-lg">{feature}</Text>
+                        </MotiView>
+                    ))}
+                </View>
+            </View>
+
+            <View className='flex-row w-full items-center justify-between h-[20%]'>
+                <OnboardArrow size={32} className='m-0' dir='left' func={() => handleStep("prev")} />
+                <Button
+                    style={{ width: "80%" }}
+                    onPress={() => handleStep("next")}>Next</Button>
+            </View>
+        </View>
+    )
+}
+const LastCTA = ({ handleStep, lastMessage, loading } : {
+    lastMessage: string
+    loading?: boolean
+    handleStep: (action: "next" | "prev") => Promise<void>
+}) => {
+    return (
+    <View className='h-screen'>
+        <View
+            className="flex-col gap-4 items-center justify-center h-[80%]"
+        >
+            <Badge
+                className='rounded-full w-fit'
+                textClassName="text-xs"
+                fullWidth={false}
+            >You're all set.</Badge>
+            <Text className='text-white text-center text-3xl font-semibold leading-tight tracking-tight md:w-2/3'>
+                {lastMessage}
+            </Text>
+        </View>
+
+        <View className='flex-row w-full items-center justify-between h-[20%]'>
+            <OnboardArrow size={32} className='m-0' dir='left' func={() => handleStep("prev")} />
+            <Button
+                style={{ width: "80%" }}
+                loading={!!loading}
+                onPress={() => handleStep("next")}>Get Started</Button>
         </View>
     </View>
     )
@@ -115,36 +167,49 @@ const OnboardQuestions = () => {
     const handleStep = async (action: "next" | "prev") => {
         if (action === "prev") {
             if (step > 0) setStep((s) => s - 1)
-            else {}
             return
         }
 
+        // Question steps: 0..qData.length-1 → validate and advance
         if (step < qData.length) {
             const currentId = qData[step].id as keyof z.infer<typeof qSchema>
-            
-            // Checking for unique handles for validation
+
             if (currentId === 'handle') {
                 const handleValue = form.getValues('handle')
                 if (handleValue) {
-                    const { isUnique, error } = await checkUniqueHandle(handleValue)
+                    setLoading(true)
+                    const { isUnique } = await checkUniqueHandle(handleValue)
                     if (!isUnique) {
                         form.setError('handle', { 
                             type: 'manual', 
                             message: 'This handle is already taken. Please choose a different one.' 
                         })
+                        setLoading(false)
                         return
                     }
                 }
             }
-            
-            const valid = await form.trigger(currentId); if (!valid) return
+
+            const valid = await form.trigger(currentId); if (!valid) { setLoading(false); return }
+            setStep((s) => s + 1); setLoading(false)
+            await Haptics.selectionAsync()
+            return
+        }
+
+        // SecondToLastCTA → just advance to LastCTA
+        if (step === qData.length) {
             setStep((s) => s + 1)
-        } else await onFinish()
+            await Haptics.selectionAsync()
+            return
+        }
+
+        // LastCTA → finish flow
+        await onFinish()
     }
 
     const lastMessage = "Ready to get inspired or share your wisdom with the world?"
     
-    return !loading ? (
+    return (
     <View className='w-screen h-screen flex-col justify-center items-center px-8'>
         <ProgressCircle className='absolute top-24 shadow-lg' currentProgress={step} maximumProgress={qData.length} />
         <AnimatePresence exitBeforeEnter>
@@ -156,12 +221,13 @@ const OnboardQuestions = () => {
                     exit={{ opacity: 0, translateY: -25 }}
                     transition={{ type: "timing", duration: 500 }}
                     style={{ position: 'absolute', left: 0, right: 0, alignItems: 'center' }}
+                    className="h-screen"
                 >
                 {step < qData.length ? (() => {
                     const { id, question, type, required, placeholder, options } = qData[step]
                     return (
                         <View
-                            className="gap-2" // Question Label & Input Group & Error Message
+                            className="gap-2 h-[80%] flex-col justify-center" // Question Label & Input Group & Error Message
                         >
                             <View
                                 className="gap-8" // Question Label & Input
@@ -229,12 +295,12 @@ const OnboardQuestions = () => {
                                                             : option.value
                                                         const optionLabel = typeof option === 'string' ? option : option.option
                                                         const isChecked = selectedValue === optionValue
-                                                        const selectOption = () => { field.onChange(optionValue) }
+                                                        const toggleOption = () => { field.onChange(isChecked ? "" : optionValue) }
                                                         return (
                                                             <OnboardBadge
                                                                 key={`onboarding-select-${optionIndex}`}
                                                                 checked={isChecked}
-                                                                onCheckedChange={selectOption}
+                                                                onCheckedChange={toggleOption}
                                                             >
                                                                 <Text>{optionLabel}</Text>
                                                             </OnboardBadge>
@@ -291,20 +357,22 @@ const OnboardQuestions = () => {
                             })()}
                         </View>
                     )
-                })() : <LastCTA lastMessage={lastMessage} handleStep={handleStep} />}
+                })() : step === qData.length ? <SecondToLastCTA handleStep={handleStep} /> : <LastCTA loading={loading} lastMessage={lastMessage} handleStep={handleStep} />}
 
                 {(step < qData.length) && (
-                    <View className={`flex-row w-full justify-between items-center
-                    ${(qData[step].type === "select" || qData[step].type === "multi-select") ? "mt-8" : "mt-32"}`}>
-                        <OnboardArrow size={32} dir='left' func={() => handleStep("prev")} />
-                        <OnboardArrow size={32} dir='right' func={() => handleStep("next")} />
+                    <View className='flex-row w-full items-center justify-between h-[20%]'>
+                        {step !== 0 && <OnboardArrow size={32} className='m-0' dir='left' func={() => handleStep("prev")} />}
+                        <Button
+                            style={{ width: step === 0 ? "100%" : "80%" }}
+                            loading={loading}
+                            onPress={() => handleStep("next")}>Next</Button>
                     </View>
                 )}
                 </MotiView>
             </View>
         </AnimatePresence>
     </View>
-  ) : <LoadingScreen/>
+  )
 }
 
 export default OnboardQuestions

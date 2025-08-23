@@ -2,7 +2,6 @@ a journal app lol
 - brand color: #58a76d
 
 tasks
-- onboarding questions ui functionality
 - work on the homepage
 -> identify the layout + what to put on it
 

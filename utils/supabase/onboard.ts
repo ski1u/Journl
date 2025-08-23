@@ -26,10 +26,11 @@ export const onboardAction = async (data: z.infer<typeof onboardingQuestionsSche
 }
 
 export const checkUniqueHandle = async (handle: string) => {
+    const normalized = handle.toLowerCase().trim()
     const { data, error } = await supabase
         .from("profiles")
         .select("handle")
-        .eq("handle", handle)
+        .eq("handle", normalized)
         .maybeSingle()
 
     if (error && (error as any)?.code !== "PGRST116") { return { isUnique: false, error: "Failed to check handle uniqueness" } }

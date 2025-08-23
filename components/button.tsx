@@ -3,11 +3,13 @@ import "@/global.css"
 import React, { forwardRef } from "react"
 
 import { Button as TButton, ButtonProps as TButtonProps } from "tamagui"
+import { ActivityIndicator } from "react-native"
 
 type Appearance = "primary" | "outline"
 
 export type AppButtonProps = TButtonProps & {
     appearance?: Appearance
+    loading?: boolean
 }
 
 const primaryDefaults: Partial<TButtonProps> = {
@@ -25,7 +27,7 @@ const outlineDefaults: Partial<TButtonProps> = {
 }
 
 export default forwardRef<any, AppButtonProps>(function Button(
-    { appearance = "primary", pressStyle, children, ...rest },
+    { appearance = "primary", pressStyle, children, loading = false, disabled, ...rest },
     ref
 ) {
     const baseDefaults = appearance === "primary" ? primaryDefaults : outlineDefaults
@@ -39,10 +41,15 @@ export default forwardRef<any, AppButtonProps>(function Button(
         <TButton
             ref={ref}
             {...baseDefaults}
+            disabled={disabled || loading}
             {...rest}
             pressStyle={mergedPressStyle}
         >
-            {children}
+            {loading ? (
+                <ActivityIndicator size="small" color={appearance === "primary" ? "#fff" : "#ddd"} />
+            ) : (
+                children
+            )}
         </TButton>
     )
 })
