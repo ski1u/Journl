@@ -20,15 +20,15 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{
         title: "Home",
-        tabBarIcon: ({ color, focused }) => <Home color={focused ? color : "#333"} size={28} />
+        tabBarIcon: ({ color, focused }) => <Home color={focused ? color : "#666"} size={28} />
       }} />
       <Tabs.Screen name="new" options={{
         title: "New",
-        tabBarIcon: ({ color, focused }) => <Plus color={focused ? color : "#333"} size={28} />
+        tabBarIcon: ({ color, focused }) => <Plus color={focused ? color : "#666"} size={28} />
       }} />
       <Tabs.Screen name="profile" options={{
         title: "Profile",
-        tabBarIcon: ({ color, focused }) => <User color={focused ? color : "#333"} size={28} />
+        tabBarIcon: ({ color, focused }) => <User color={focused ? color : "#666"} size={28} />
       }} />
     </Tabs>
   )

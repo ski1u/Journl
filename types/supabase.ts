@@ -44,7 +44,7 @@ export type Database = {
           body: string | null
           created_at: string | null
           id: string
-          image_path: string | null
+          image_paths: string[] | null
           is_archived: boolean | null
           title: string | null
           updated_at: string | null
@@ -54,7 +54,7 @@ export type Database = {
           body?: string | null
           created_at?: string | null
           id?: string
-          image_path?: string | null
+          image_paths?: string[] | null
           is_archived?: boolean | null
           title?: string | null
           updated_at?: string | null
@@ -64,7 +64,7 @@ export type Database = {
           body?: string | null
           created_at?: string | null
           id?: string
-          image_path?: string | null
+          image_paths?: string[] | null
           is_archived?: boolean | null
           title?: string | null
           updated_at?: string | null

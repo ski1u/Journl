@@ -2,15 +2,15 @@ a journal app lol
 - brand color: #58a76d
 
 tasks
-- work on the homepage
--> identify the layout + what to put on it
+- add timeline
+- work on creating an entry
 
 --
 
 overall app:
-Auth (Supabase email/password + magic link optional)
+Auth (Supabase email/password + magic link optional) yes
 
-Feed / Timeline (list of entries, infinite scroll)
+Feed / Timeline (list of entries, infinite scroll) yes
 
 Add Entry (camera + text fields, tags, privacy toggle)
 
