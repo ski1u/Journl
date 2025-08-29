@@ -13,8 +13,8 @@ export default function Badge({ children, className, textClassName, textStyle, f
 } & React.ComponentProps<typeof View>) {
     const incomingStyle = (rest as any)?.style as ViewStyle | ViewStyle[] | undefined
     const mergedContainerStyle = Array.isArray(incomingStyle)
-        ? [{ alignSelf: fullWidth ? 'stretch' : 'auto' } as ViewStyle, ...incomingStyle]
-        : [{ alignSelf: fullWidth ? 'stretch' : 'auto' } as ViewStyle, incomingStyle].filter(Boolean)
+        ? [{ alignSelf: fullWidth ? 'stretch' : 'flex-start' } as ViewStyle, ...incomingStyle]
+        : [{ alignSelf: fullWidth ? 'stretch' : 'flex-start' } as ViewStyle, incomingStyle].filter(Boolean)
 
     return (
         <View

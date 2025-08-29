@@ -104,7 +104,7 @@ export default function OnboardForAuth() {
                     <View style={{ width: "100%", height: 200, overflow: "hidden", alignItems: "center", justifyContent: "center" }}>
                         <item.image width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
                     </View>
-                    <Badge>{item.tag}</Badge>
+                    <Badge fullWidth={false}>{item.tag}</Badge>
                     <Text className="text-white text-3xl font-bold tracking-tighter">{item.title}</Text>
                     <Text className="text-[#ddd] text-sm">{item.desc}</Text>
                   </View>
