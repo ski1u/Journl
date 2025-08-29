@@ -1,29 +1,52 @@
-a journal app lol
+# a journal app lol
 - brand color: #58a76d
 
-tasks
-- add timeline
-- work on creating an entry
+## tasks
+- update Entry Card Component UI
+- implement aesthetic lienar gradient masking and blur for a "scrolling experience"
+- floating plus button
 
---
+---
 
-overall app:
-Auth (Supabase email/password + magic link optional) yes
+## novel ideas:
+- create folders (create a folder tab -> icons, name, color)
+- homepage should be a statistical summary dashboard, suggestions, & widgets
 
-Feed / Timeline (list of entries, infinite scroll) yes
+## overall app:
+### Authentication (Supabase Auth)
+- Email/password sign up & login.
+- Social auth (optional for later).
 
-Add Entry (camera + text fields, tags, privacy toggle)
+### Onboarding Flow (before login)
+- Informational slides about the app.
+- “Skip” and “Get Started” buttons.
 
-Entry Detail (view photo, full text, edit, delete, archive)
+### Journal Entries & Folders
+- Add a new entry: text + photo.
+- Store entry in Supabase DB + photo in Supabase storage.
 
-Drawer with Settings (profile, dark mode, export, backups)
+- Optimistic UI (entry shows instantly while syncing).
+- Live CRUD (updates across devices in real time).
 
-Optimistic create/update/delete + realtime updates
+### Journal Feed
+- List of all entries (reverse chronological).
+- Infinite scroll or pagination.
+- Responsive design (cards that adapt to screen size).
 
-Responsive layouts (phone/portrait, landscape, tablets)
+### Entry Detail Screen
+- Full entry view (text + photo).
+- Edit & delete options.
 
-Animations (list item entrance, like/heart animation, modal transitions)
+### Navigation
+- Stack Navigator: Auth flow → App flow.
+- Tabs: Home (entries), Add Entry, Profile, Summary.
+- Drawer (optional): Settings, Privacy, About.
 
-Local cache & offline read (AsyncStorage or react-query/persist)
+### Profile & Settings
+- Basic user profile (name, avatar).
+- Settings: logout, theme toggle, reminders (later).
 
-Optional: passcode / biometric lock for privacy
+### Animations (Moti)
+- Onboarding illustrations fade/scale in.
+- Floating “+” button animates.
+- Entry cards with subtle entry animations.

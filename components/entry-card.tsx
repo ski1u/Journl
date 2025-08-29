@@ -18,13 +18,14 @@ export default function EntryCard({ data }: {
 
     // ---
 
+    const maxPreviewImages = 2
     const rawImagePaths = Array.isArray((data as any)?.image_paths)
         ? ((data as any).image_paths as unknown[])
         : []
     const images: ImageSourcePropType[] = rawImagePaths
-        .slice(0, 4)
+        .slice(0, maxPreviewImages)
         .map((p) => (typeof p === "string" ? { uri: p } : (p as ImageSourcePropType)))
-    const placeholdersCount = Math.max(0, 4 - images.length)
+    const placeholdersCount = Math.max(0, maxPreviewImages - images.length)
     const editedLabel = formatEditedLabel(updated_at ?? created_at)
 
     const ellipsisRef = React.useRef<View>(null)
@@ -55,14 +56,13 @@ export default function EntryCard({ data }: {
             style={{ backgroundColor: "#222", borderColor: "#444", borderWidth: 1 }}
         >
             <Card.Header
-                style={{ gap: 12 }}
+                style={{ gap: 8 }}
             >
                 <View
                     className="gap-2"
                 >
-                    <Text className="text-white font-bold text-3xl tracking-tight" numberOfLines={1}>{title}</Text>
                     <View
-                        className="flex-row justify-between"
+                        className="flex-row justify-center gap-4"
                     >
                         {images.map((source, index) => (
                             <Image
@@ -76,10 +76,11 @@ export default function EntryCard({ data }: {
                             Array.from({ length: placeholdersCount }).map((_, index) => (
                                 <Card
                                     style={{
-                                        width: 80, height: 108,
+                                        width: 150, height: 108,
                                         backgroundColor: "#444",
                                         opacity: Math.max(0.2, 0.8 - index * 0.2),
-                                        flexDirection: "column", justifyContent: "center", alignItems: "center"
+                                        flexDirection: "column", justifyContent: "center", alignItems: "center",
+                                        borderRadius: 24
                                     }}
                                     key={`entry-placeholder-image-${index}`}
                                 >{index === 0 && <Plus color="#ddd" size={32} />}</Card>
@@ -87,10 +88,11 @@ export default function EntryCard({ data }: {
                     </View>
                 </View>
 
+                <Text className="text-white font-bold text-3xl tracking-tight" numberOfLines={1}>{title}</Text>
                 <Text className="text-gray-400" numberOfLines={2}>{body}</Text>
 
                 <View
-                    className="flex-row justify-between items-center"
+                    className="flex-row justify-between items-center border-t-[1px] border-[#999]"
                 >
                     <Text className="text-[#ddd]">{editedLabel ?? ""}</Text>
                     <Pressable ref={ellipsisRef} onPress={onPressEllipsis} hitSlop={8}>
