@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import type { Session } from "@supabase/supabase-js";
 import { TamaguiProvider } from "tamagui";
+import { PortalProvider } from "@tamagui/portal"
 
 import { useColorScheme, Text } from 'react-native';
 import LoadingScreen from "@/components/loading-screen";
@@ -95,28 +96,37 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <GestureHandlerRootView>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={{
+        ...(colorScheme === 'dark' ? DarkTheme : DefaultTheme),
+        colors: {
+          ...((colorScheme === 'dark' ? DarkTheme : DefaultTheme).colors),
+          background: '#121214',
+          card: '#121214',
+        }
+      }}>
         <TamaguiProvider config={tamaguiConfig}>
-          <StatusBar  />
+          <PortalProvider shouldAddRootHost>
+            <StatusBar  />
 
-          <Stack
-            screenOptions={{
-              contentStyle: {
-                backgroundColor: colorScheme === "dark" ? "#121212" : "#f5f5f5"
-              },
-              headerShown: false
-            }}
-          >
-            <Stack.Screen
-              name="(drawer)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(auth)"
-              options={{ headerShown: false }}
-            />
-          </Stack>
+            <Stack
+              screenOptions={{
+                contentStyle: {
+                  // backgroundColor: '#121214'
+                },
+                headerShown: false
+              }}
+            >
+              <Stack.Screen
+                name="(drawer)"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="(auth)"
+                options={{ headerShown: false }}
+              />
+            </Stack>
+          </PortalProvider>
         </TamaguiProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
