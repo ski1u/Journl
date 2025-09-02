@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll"
   },
@@ -15,8 +15,10 @@
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.1",
     "@expo/vector-icons": "^14.1.0",
+    "@gorhom/bottom-sheet": "^5.2.4",
     "@hookform/resolvers": "^5.2.1",
     "@react-native-async-storage/async-storage": "2.1.2",
+    "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-navigation/bottom-tabs": "^7.4.6",
     "@react-navigation/drawer": "^7.5.7",
     "@react-navigation/native": "^7.1.6",
@@ -27,11 +29,13 @@
     "@tamagui/core": "^1.132.19",
     "@tamagui/portal": "^1.132.23",
     "@tamagui/theme": "^1.132.19",
+    "@zeego/menu": "^0.0.2-alpha.28",
     "add": "^2.0.6",
     "babel-preset-expo": "13.0.0",
     "dlx": "^0.2.1",
     "expo": "53.0.22",
     "expo-blur": "~14.1.5",
+    "expo-dev-client": "~5.2.4",
     "expo-font": "~13.3.2",
     "expo-google-fonts": "^0.0.0",
     "expo-haptics": "~14.1.4",
@@ -52,7 +56,8 @@
     "react-dom": "19.0.0",
     "react-hook-form": "^7.62.0",
     "react-native": "0.79.5",
-    "react-native-gesture-handler": "2.24.0",
+    "react-native-gesture-handler": "^2.24.0",
+    "react-native-ios-utilities": "^5.1.2",
     "react-native-popup-menu": "^0.18.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "^5.4.0",
@@ -64,6 +69,7 @@
     "shadcn": "^2.10.0",
     "tailwindcss": "^3.4.17",
     "tamagui": "^1.132.19",
+    "zeego": "^3.0.6",
     "zod": "^4.0.17"
   },
   "devDependencies": {

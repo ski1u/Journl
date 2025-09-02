@@ -7,6 +7,7 @@ export type UseEntriesListOptions = {
     itemVisiblePercentThreshold?: number
     minimumViewTimeMs?: number
     visibilityBuffer?: number
+    showArchived?: boolean
 }
 
 export function useEntriesList(options: UseEntriesListOptions = {}) {
@@ -14,8 +15,9 @@ export function useEntriesList(options: UseEntriesListOptions = {}) {
     const visibilityBuffer = Math.max(0, options.visibilityBuffer ?? 1)
     const itemVisiblePercentThreshold = options.itemVisiblePercentThreshold ?? 20
     const minimumViewTimeMs = options.minimumViewTimeMs ?? 80
+    const showArchived = options.showArchived ?? false
 
-    const [entries, setEntries] = React.useState<Entry[] | null>(getCachedEntries())
+    const [entries, setEntries] = React.useState<Entry[] | null>(getCachedEntries(showArchived))
     const [loading, setLoading] = React.useState<boolean>(!entries)
     const [error, setError] = React.useState<string | null>(null)
 
@@ -27,11 +29,20 @@ export function useEntriesList(options: UseEntriesListOptions = {}) {
     const heightsRef = React.useRef<Map<string, number>>(new Map())
     const [measureTick, setMeasureTick] = React.useState(0)
 
+    // Reset to appropriate cache bucket when filter changes
+    React.useEffect(() => {
+        const cached = getCachedEntries(showArchived)
+        setEntries(cached)
+        setLoading(!cached)
+        setError(null)
+    }, [showArchived])
+
+    // Fetch if nothing cached for the active filter
     React.useEffect(() => {
         let isMounted = true
         ;(async () => {
             if (entries) return
-            const { entries: fetched, error } = await fetchEntriesForCurrentUser(false)
+            const { entries: fetched, error } = await fetchEntriesForCurrentUser(false, showArchived)
             if (!isMounted) return
             if (error) {
                 setError(error)
@@ -42,7 +53,7 @@ export function useEntriesList(options: UseEntriesListOptions = {}) {
             setLoading(false)
         })()
         return () => { isMounted = false }
-    }, [])
+    }, [entries, showArchived])
 
     React.useEffect(() => {
         if (!entries) return
@@ -94,20 +105,25 @@ export function useEntriesList(options: UseEntriesListOptions = {}) {
     const loadMore = React.useCallback(async () => {
         if (loadingMore || !hasMore) return
         setLoadingMore(true)
-        const nextOffset = pageCount * pageSize
-        const { entries: next, error, hasMore: more } = await fetchEntriesPage({ limit: pageSize, offset: nextOffset })
-        if (!error) {
-            setList((prev) => {
-                const seen = new Set(prev.map((e) => e.id))
-                const merged = [...prev]
-                next.forEach((row) => { if (!seen.has(row.id)) { merged.push(row); seen.add(row.id) } })
-                return merged
-            })
-            setPageCount((c) => c + 1)
-            setHasMore(more)
+        try {
+            const nextOffset = pageCount * pageSize
+            const { entries: next, error, hasMore: more } = await fetchEntriesPage({ limit: pageSize, offset: nextOffset, showArchived })
+            if (!error) {
+                setList((prev) => {
+                    const seen = new Set(prev.map((e) => e.id))
+                    const merged = [...prev]
+                    next.forEach((row) => { if (!seen.has(row.id)) { merged.push(row); seen.add(row.id) } })
+                    return merged
+                })
+                setPageCount((c) => c + 1)
+                setHasMore(more)
+            } else {
+                setError(error)
+            }
+        } finally {
+            setLoadingMore(false)
         }
-        setLoadingMore(false)
-    }, [loadingMore, hasMore, pageCount, pageSize])
+    }, [loadingMore, hasMore, pageCount, pageSize, showArchived])
 
     const empty = !loading && (!!entries ? entries.length === 0 : true)
 

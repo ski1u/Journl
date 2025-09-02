@@ -2,9 +2,8 @@
 - brand color: #58a76d
 
 ## tasks
-- update Entry Card Component UI
-- implement aesthetic lienar gradient masking and blur for a "scrolling experience"
 - floating plus button
+- creating new entry modal (text input error rn)
 
 ---
 
@@ -13,14 +12,6 @@
 - homepage should be a statistical summary dashboard, suggestions, & widgets
 
 ## overall app:
-### Authentication (Supabase Auth)
-- Email/password sign up & login.
-- Social auth (optional for later).
-
-### Onboarding Flow (before login)
-- Informational slides about the app.
-- “Skip” and “Get Started” buttons.
-
 ### Journal Entries & Folders
 - Add a new entry: text + photo.
 - Store entry in Supabase DB + photo in Supabase storage.

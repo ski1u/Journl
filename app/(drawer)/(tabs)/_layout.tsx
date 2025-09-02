@@ -2,7 +2,7 @@ import "@/global.css"
 
 import { Tabs } from "expo-router"
 
-import { Home, Plus, User } from "lucide-react-native"
+import { Home, Plus, User, PenBox } from "lucide-react-native"
 
 export default function TabsLayout() {
   return (
@@ -22,9 +22,9 @@ export default function TabsLayout() {
         title: "Home",
         tabBarIcon: ({ color, focused }) => <Home color={focused ? color : "#666"} size={28} />
       }} />
-      <Tabs.Screen name="new" options={{
-        title: "New",
-        tabBarIcon: ({ color, focused }) => <Plus color={focused ? color : "#666"} size={28} />
+      <Tabs.Screen name="journals" options={{
+        title: "Journals",
+        tabBarIcon: ({ color, focused }) => <PenBox color={focused ? color : "#666"} size={28} />
       }} />
       <Tabs.Screen name="profile" options={{
         title: "Profile",
